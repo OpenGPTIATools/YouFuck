@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FuckTube Video Player</title>
+<style>
+body {
+  background-color: black;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #0af;
+  text-shadow: 0 0 5px #0af, 0 0 10px #00ffff;
+}
+
+.search-bar-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.thumbnail-container, #videoPlayer {
+  cursor: pointer;
+  position: relative;
+  width: 640px;
+  height: 360px;
+  margin: auto;
+  box-shadow: 0 0 5px #0af, 0 0 10px #00ffff;
+  border: 3px solid #00ffff;
+}
+
+.thumbnail-container img, #videoPlayer iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  background: url('https://i.imgur.com/TxzC70f.png') no-repeat;
+  background-size: contain;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+input[type="text"] {
+  width: 50%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #0af;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 5px #0af, 0 0 10px #00ffff;
+}
+
+button:hover {
+  background-color: #08f;
+  box-shadow: 0 0 10px #0af, 0 0 20px #00ffff;
+}
+
+.reset-button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #f44;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 5px #f44, 0 0 10px #f88;
+}
+
+.reset-button:hover {
+  background-color: #f66;
+  box-shadow: 0 0 10px #f44, 0 0 20px #f88;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  margin-top: 30px;
+  color: #0af;
+  text-shadow: 0 0 5px #0af, 0 0 10px #00ffff;
+}
+
+@media (max-width: 720px) {
+  input[type="text"], button {
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  .thumbnail-container, #videoPlayer {
+    width: 100%;
+    height: auto;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-text">FuckTube</div>
+</div>
+
+<div class="search-bar-container">
+  <input type="text" id="videoUrl" placeholder="Cole a URL do vídeo do YouTube aqui" />
+  <button onclick="loadVideo()">Carregar Vídeo</button>
+  <button class="reset-button" onclick="resetPlayer()">Resetar</button>
+</div>
+
+<div class="thumbnail-container" onclick="playVideo()">
+  <img id="thumbnail" alt="Video Thumbnail" class="hidden">
+  <div id="play-button" class="play-button hidden"></div>
+</div>
+
+<div id="videoPlayer" class="hidden">
+  <iframe id="iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+<div class="footer">
+  <span id="credits">Created By Chewbacca1337 | Gtx Nasa Technology | </span>
+</div>
+
+<script>
+function getYouTubeID(url) {
+  const regExp = /^.*(youtu\.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : false;
+}
+
+function loadVideo() {
+  const url = document.getElementById('videoUrl').value;
+  const videoId = getYouTubeID(url);
+
+  if (videoId) {
+    const thumbnailImage = document.getElementById('thumbnail');
+    const videoPlayer = document.getElementById('videoPlayer');
+    const iframe = document.getElementById('iframe');
+    thumbnailImage.src = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+    thumbnailImage.classList.remove('hidden');
+    document.getElementById('play-button').classList.remove('hidden');
+    videoPlayer.classList.add('hidden');
+    iframe.src = ''; // Reset the iframe source
+  } else {
+    alert('Por favor, insira uma URL válida do YouTube.');
+  }
+}
+
+function playVideo() {
+  const videoId = getYouTubeID(document.getElementById('videoUrl').value);
+  if (videoId) {
+    const iframeSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&showinfo=0`;
+    document.getElementById('iframe').src = iframeSrc;
+    document.getElementById('videoPlayer').classList.remove('hidden');
+    document.querySelector('.thumbnail-container').classList.add('hidden');
+  } else {
+    alert('Por favor, insira uma URL válida do YouTube.');
+  }
+}
+
+function resetPlayer() {
+  const videoPlayer = document.getElementById('videoPlayer');
+  const thumbnailContainer = document.querySelector('.thumbnail-container');
+  const iframe = document.getElementById('iframe');
+  const thumbnailImage = document.getElementById('thumbnail');
+  const playButton = document.getElementById('play-button');
+
+  videoPlayer.classList.add('hidden');
+  thumbnailContainer.classList.remove('hidden');
+  iframe.src = '';
+  thumbnailImage.src = '';
+  thumbnailImage.classList.add('hidden');
+  playButton.classList.add('hidden');
+}
+
+document.getElementById('credits').innerHTML += new Date().getFullYear();
+</script>
+
+</body>
+</html>
